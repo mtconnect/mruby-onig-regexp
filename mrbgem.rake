@@ -23,9 +23,9 @@ MRuby::Gem::Specification.new('mruby-onig-regexp') do |spec|
       oniguruma_lib = libfile "#{oniguruma_dir}/.libs/libonigmo"
     else
       if ENV['PROCESSOR_ARCHITECTURE'] == 'AMD64'
-        oniguruma_lib = libfile "#{oniguruma_dir}/build_x86-64/libonigmo"
+        oniguruma_lib = libfile "#{oniguruma_dir}/build_x64/onigmo_s"
       else
-        oniguruma_lib = libfile "#{oniguruma_dir}/build_i686/libonigmo"
+        oniguruma_lib = libfile "#{oniguruma_dir}/build_x86/onigmo_s"
       end
     end
     header = "#{oniguruma_dir}/onigmo.h"
