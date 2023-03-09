@@ -36,10 +36,8 @@ MRuby::Gem::Specification.new('mruby-onig-regexp') do |spec|
 
     file header do |t|
       FileUtils.mkdir_p oniguruma_dir
-      Dir.chdir(build_dir) do
-        _pp 'extracting', "onigmo-#{version}"
-        `gzip -dc "#{dir}/onigmo-#{version}.tar.gz" | tar xf -`
-      end
+      _pp 'copying', "onigmo-#{version} to #{build_dir}"
+      FileUtils.cp_r "#{dir}/onigmo-#{version}", build_dir
     end
 
     def run_command(env, command)
