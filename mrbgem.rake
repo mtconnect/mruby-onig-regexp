@@ -68,6 +68,7 @@ MRuby::Gem::Specification.new('mruby-onig-regexp') do |spec|
           run_command e, './autogen.sh' if File.exist? 'autogen.sh'
           run_command e, 'aclocal'
           run_command e, 'automake'
+          run_command e, 'chmod a+x ./configure'
           run_command e, "./configure --disable-shared --enable-static #{host}"
           run_command e, "make -j#{$rake_jobs || 1}"
         else
