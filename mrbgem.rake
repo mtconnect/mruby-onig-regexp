@@ -80,7 +80,6 @@ MRuby::Gem::Specification.new('mruby-onig-regexp') do |spec|
         end
       end
 
-      puts "!!!!! Making directory #{libonig_objs_dir}"
       FileUtils.mkdir_p libonig_objs_dir
       Dir.chdir(libonig_objs_dir) do
         unless visualcpp
@@ -94,17 +93,13 @@ MRuby::Gem::Specification.new('mruby-onig-regexp') do |spec|
         end
       end
       objs = Dir.glob("#{libonig_objs_dir}/*#{objext}")
-      puts "!!!! Adding libmruby depends: #{objs.join(', ')}"
       file libmruby_a => objs
     end
 
-    puts "!!!!! Looking for directory: #{oniguruma_lib}"
     if File.exist? oniguruma_lib
       objs = Dir.glob("#{libonig_objs_dir}/*#{objext}")      
       file libmruby_a => objs
       objs.each{|obj| file obj => oniguruma_lib }
-    else
-      puts "!!!!! Cannot find #{oniguruma_lib}"
     end
 
     task :mruby_onig_regexp_with_compile_option do
