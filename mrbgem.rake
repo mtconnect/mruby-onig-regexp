@@ -104,6 +104,9 @@ MRuby::Gem::Specification.new('mruby-onig-regexp') do |spec|
       cc.defines += ['HAVE_ONIGMO_H']
     end
     file "#{dir}/src/mruby_onig_regexp.c" => [:mruby_onig_regexp_with_compile_option, oniguruma_lib]
+
+    puts "!!!! --> Adding #{oniguruma_lib} to libraries"
+    self.linker.libraries << oniguruma_lib.sub(/\.lib$/, '')
   end
 
   if spec.respond_to? :search_package and spec.search_package 'onigmo'
