@@ -17,7 +17,9 @@ MRuby::Gem::Specification.new('mruby-onig-regexp') do |spec|
     end
 
     version = '6.2.0'
-    oniguruma_dir = "#{build_dir}/onigmo-#{version}"
+
+    new_build_dir = build_dir.gsub('\\','/')
+    oniguruma_dir = "#{new_build_dir}/onigmo-#{version}"
     oniguruma_lib = libfile "#{oniguruma_dir}/.libs/libonigmo"
     unless ENV['OS'] == 'Windows_NT'
       oniguruma_lib = libfile "#{oniguruma_dir}/.libs/libonigmo"
@@ -36,7 +38,7 @@ MRuby::Gem::Specification.new('mruby-onig-regexp') do |spec|
 
     file header do |t|
       FileUtils.mkdir_p oniguruma_dir
-      _pp 'copying', "onigmo-#{version} to #{build_dir}"
+      _pp 'copying', "onigmo-#{version} to #{new_build_dir}"
       FileUtils.cp_r "#{dir}/onigmo-#{version}", build_dir
     end
 
@@ -78,6 +80,7 @@ MRuby::Gem::Specification.new('mruby-onig-regexp') do |spec|
         end
       end
 
+      puts "!!!!! Making directory #{libonig_objs_dir}"
       FileUtils.mkdir_p libonig_objs_dir
       Dir.chdir(libonig_objs_dir) do
         unless visualcpp
@@ -90,13 +93,18 @@ MRuby::Gem::Specification.new('mruby-onig-regexp') do |spec|
           end
         end
       end
-      file libmruby_a => Dir.glob("#{libonig_objs_dir}/*#{objext}")
+      objs = Dir.glob("#{libonig_objs_dir}/*#{objext}")
+      puts "!!!! Adding libmruby depends: #{objs.join(', ')}"
+      file libmruby_a => objs
     end
 
+    puts "!!!!! Looking for directory: #{oniguruma_lib}"
     if File.exist? oniguruma_lib
-      objs = Dir.glob("#{libonig_objs_dir}/*#{objext}")
+      objs = Dir.glob("#{libonig_objs_dir}/*#{objext}")      
       file libmruby_a => objs
       objs.each{|obj| file obj => oniguruma_lib }
+    else
+      puts "!!!!! Cannot find #{oniguruma_lib}"
     end
 
     task :mruby_onig_regexp_with_compile_option do
@@ -104,9 +112,6 @@ MRuby::Gem::Specification.new('mruby-onig-regexp') do |spec|
       cc.defines += ['HAVE_ONIGMO_H']
     end
     file "#{dir}/src/mruby_onig_regexp.c" => [:mruby_onig_regexp_with_compile_option, oniguruma_lib]
-
-    puts "!!!! --> Adding #{oniguruma_lib} to libraries"
-    self.linker.libraries << oniguruma_lib.sub(/\.lib$/, '')
   end
 
   if spec.respond_to? :search_package and spec.search_package 'onigmo'
